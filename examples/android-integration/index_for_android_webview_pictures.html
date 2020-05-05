@@ -1,0 +1,124 @@
+<html>
+<head>
+  <script src="https://ai-sdk.morphcast.com/v1.11/ai-sdk.js"></script>
+</head>
+<body cz-shortcut-listen="true">
+<script>
+
+  let stopped = true;
+  const customSource = {
+    // The getFrame methods must return a promise resolved with the ImageData of the currentFrame.
+    // It currently retrieves the frame from the Native App getFrameFromApp method encoded in Base64
+    // maxSize = Max size in px of the larger side of the frame. You should scale the image yourself before resolving it (optional).
+
+    getFrame(maxSize) {
+      return new Promise((resolve) => {
+        Base64ToImgData(NativeApp.getFrameFromApp(maxSize), function (imgData) {
+          resolve(imgData);
+        });
+      });
+    },
+    // resume the camera stream
+    start() {
+      stopped = false;
+      /* (..can be empty..) */
+    },
+    // stop the camera stream
+    stop() {
+      stopped = true;
+      /* (..can be empty..) */
+    },
+    // return the status of the camera Stream.
+    get stopped() {
+      return stopped;
+    }
+  };
+
+  const age_config = {
+    windowSizeMs: 4000,
+    maxVarianceCutoff: Math.pow(7, 2),
+    numericalStability: 1
+  };
+
+  const gender_config = {
+    smoothness: 0.95
+  };
+
+  CY.loader()
+    .addModule(CY.modules().FACE_DETECTOR.name, {resetTrackerAfter: 1}) // if you plan to use the sdk with single images instead of a camera stream add this line.
+    .addModule(CY.modules().FACE_AGE.name, age_config)
+    .addModule(CY.modules().FACE_GENDER.name, gender_config)
+    .addModule(CY.modules().FACE_POSE.name, {})
+    .addModule(CY.modules().FACE_FEATURES.name, {})
+    .addModule(CY.modules().FACE_AROUSAL_VALENCE.name, {})
+    .addModule(CY.modules().FACE_ATTENTION.name, {})
+    .source(customSource)
+    .delayMs(1000 / 3)
+    .load()
+    .then(({start, stop}) => {
+      start()
+    });
+
+
+  window.addEventListener('CY_FACE_AGE_RESULT', function (data) {
+    if (data) {
+      NativeApp.onDataFromMphSdk("AGE", JSON.stringify(data.detail.output.numericAge));
+    }
+  });
+
+  let gender_results = 0;
+  const MIN_GENDER_RESULTS = 20;
+
+  window.addEventListener('CY_FACE_GENDER_RESULT', function (data) {
+    if (data) {
+      gender_results += 1;
+      if (gender_results >= MIN_GENDER_RESULTS) {
+        NativeApp.onDataFromMphSdk("GENDER", JSON.stringify(data.detail.output.gender));
+      }
+    }
+  });
+
+  window.addEventListener('CY_FACE_POSE_RESULT', function (data) {
+    if (data) {
+      NativeApp.onDataFromMphSdk("POSE", JSON.stringify(data.detail.output.pose));
+    }
+  });
+
+  window.addEventListener('CY_FACE_FEATURES_RESULT', function (data) {
+    if (data) {
+      NativeApp.onDataFromMphSdk("FEATURES", JSON.stringify(data.detail.output.features));
+    }
+  });
+
+  window.addEventListener('CY_FACE_AROUSAL_VALENCE_RESULT', function (data) {
+    if (data) {
+      NativeApp.onDataFromMphSdk("AROUSAL_VALENCE", JSON.stringify(data.detail.output.arousalvalence));
+    }
+  });
+
+  window.addEventListener('CY_FACE_ATTENTION_RESULT', function (data) {
+    if (data) {
+      NativeApp.onDataFromMphSdk("ATTENTION", JSON.stringify(data.detail.output.attention));
+    }
+  });
+
+
+  function Base64ToImgData(b64, cb) {
+    var canvas = document.createElement('canvas');
+    var context = canvas.getContext('2d');
+    var img = new Image();
+    img.onload = function () {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      context.drawImage(img, 0, 0);
+      cb(context.getImageData(0, 0, img.width, img.height));
+    };
+    img.src = b64;
+
+  }
+
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,135 @@
+<html>
+<head>
+  <script src="https://ai-sdk.morphcast.com/v1.11/ai-sdk.js"></script>
+</head>
+<body cz-shortcut-listen="true">
+
+<script>
+
+  var rF = e => e;
+  var stopped = true;
+
+  const customSource = {
+    // The getFrame methods must return a promise resolved with the ImageData of the currentFrame.
+    // It currently retrieves the frame from the Native App throught the resolveFrame function encoded in Base64
+    // maxSize = Max size in px of the larger side of the frame. You should scale the image yourself before resolving it (optional).
+
+    getFrame(maxSize) {
+      return new Promise((resolve) => {
+        rF = resolve;
+        window.webkit.messageHandlers.camera.postMessage({value: maxSize});
+      });
+    },
+    // resume the camera stream
+    start() {
+      stopped = false;
+      /* (..can be empty..) */
+    },
+    // stop the camera stream
+    stop() {
+      stopped = true;
+      /* (..can be empty..) */
+    },
+    // return the status of the camera Stream.
+    get stopped() {
+      return stopped;
+    }
+  };
+
+  const age_config = {
+    windowSizeMs: 4000,
+    maxVarianceCutoff: Math.pow(7, 2),
+    numericalStability: 1,
+    backendOrder: "webassembly"
+  };
+
+  const gender_config = {
+    smoothness: 0.95,
+    backendOrder: "webassembly"
+  };
+
+  CY.loader()
+    .addModule(CY.modules().FACE_DETECTOR.name, {resetTrackerAfter: 1}) // if you plan to use the sdk with single images instead of a camera stream add this line.
+    .addModule(CY.modules().FACE_BASE.name, {backendOrder: "webassembly"})
+    .addModule(CY.modules().FACE_AGE.name, age_config)
+    .addModule(CY.modules().FACE_GENDER.name, gender_config)
+    .addModule(CY.modules().FACE_POSE.name, {backendOrder: "webassembly"})
+    .addModule(CY.modules().FACE_FEATURES.name, {backendOrder: "webassembly"})
+    .addModule(CY.modules().FACE_AROUSAL_VALENCE.name, {backendOrder: "webassembly"})
+    .addModule(CY.modules().FACE_ATTENTION.name, {backendOrder: "webassembly"})
+    .source(customSource)
+    .load()
+    .then(({start, stop}) => {
+      start()
+    });
+
+
+  window.addEventListener('CY_FACE_AGE_RESULT', function (data) {
+    if (data) {
+      window.webkit.messageHandlers.data.postMessage({type: 'AGE', value: JSON.stringify(data.detail.output)});
+    }
+  });
+
+  let gender_results = 0;
+  const MIN_GENDER_RESULTS = 20;
+
+  window.addEventListener('CY_FACE_GENDER_RESULT', function (data) {
+    if (data) {
+      gender_results += 1;
+      if (gender_results >= MIN_GENDER_RESULTS) {
+        window.webkit.messageHandlers.data.postMessage({type: 'GENDER', value: JSON.stringify(data.detail.output)});
+      }
+    }
+  });
+
+  window.addEventListener('CY_FACE_POSE_RESULT', function (data) {
+    if (data) {
+      window.webkit.messageHandlers.data.postMessage({type: 'POSE', value: JSON.stringify(data.detail.output)});
+    }
+  });
+
+  window.addEventListener('CY_FACE_FEATURES_RESULT', function (data) {
+    if (data) {
+      window.webkit.messageHandlers.data.postMessage({type: 'FEATURES', value: JSON.stringify(data.detail.output)});
+    }
+  });
+
+  window.addEventListener('CY_FACE_AROUSAL_VALENCE_RESULT', function (data) {
+    if (data) {
+      window.webkit.messageHandlers.data.postMessage({
+        type: 'AROUSAL_VALENCE',
+        value: JSON.stringify(data.detail.output)
+      });
+    }
+  });
+
+  window.addEventListener('CY_FACE_ATTENTION_RESULT', function (data) {
+    if (data) {
+      window.webkit.messageHandlers.data.postMessage({type: 'ATTENTION', value: JSON.stringify(data.detail.output)});
+    }
+  });
+
+  function resolveFrame(bs64Frame) {
+    Base64ToImgData(bs64Frame, function (imgData) {
+      rF(imgData);
+      rF = e => e;
+    });
+  }
+
+  function Base64ToImgData(b64, cb) {
+    var canvas = document.createElement('canvas');
+    var context = canvas.getContext('2d');
+    var img = new Image();
+    img.onload = function () {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      context.drawImage(img, 0, 0);
+      cb(context.getImageData(0, 0, img.width, img.height));
+    };
+    img.src = b64;
+  }
+
+</script>
+
+</body>
+</html>
