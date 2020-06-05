@@ -1,7 +1,18 @@
 # MorphCast AI SDK for JavaScript
 
-With MorphCast AI HTML5 SDK, developers can easily add an emotion and demographic analysis layer to their web sites, 
-landing pages and Apps, creating exciting, adaptive digital experiences. MorphCast is being used across digital campaigns, 
+MorphCast HTML5 AI SDK is a native JavaScript engine, based on Deep Neural Networks.
+
+It works directly in the web-browser of mobile and desktop and in a webview inside mobile App.
+
+It fires events at an average rate of 10 times per second on mobile, and even up to 30 per second on destkop.
+Data output is ready-to-use, already filtered for your convenience (parameters can also be changed in order to have a smoother or RAW output for more deep use in your code).
+
+You can store all data produced in local memory, in local storage or properly sent to your server.
+
+## Use cases 
+
+You can easily add an emotion and demographic analysis layer to your web site, 
+landing page or App, creating exciting, adaptive digital experiences. MorphCast is being used across digital campaigns, 
 corporate learning, eLearning, e-commerce, digital out-of-home and many other uses.
 
 ## Quick Start
@@ -11,7 +22,7 @@ Copy and paste the following code snippet inside the _body_ of an HTML page, or 
 ```html
 <body>
 ...
-<script src="https://ai-sdk.morphcast.com/v1.10/ai-sdk.js"></script>
+<script src="https://ai-sdk.morphcast.com/v1.12/ai-sdk.js"></script>
 <script>
 CY.loader()
   .addModule(CY.modules().FACE_EMOTION.name)
