@@ -22,7 +22,7 @@ Copy and paste the following code snippet inside the _body_ of an HTML page, or 
 ```html
 <body>
 ...
-<script src="https://ai-sdk.morphcast.com/v1.12/ai-sdk.js"></script>
+<script src="https://ai-sdk.morphcast.com/v1.13/ai-sdk.js"></script>
 <script>
 CY.loader()
   .addModule(CY.modules().FACE_EMOTION.name)
