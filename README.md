@@ -4,7 +4,7 @@ MorphCast SDK is a native JavaScript engine for Real-Time Face Analysis, based o
 
 It works directly in the web-browser of mobile and desktop platforms.
 
-User face is analyzed though the input camera device, at an average rate of 10 times per second on mobile, and even up to 30 per second on desktop. Resulting output data is returned as ready-to-use events, already filtered for your convenience.
+User face is analyzed though the input camera device, at an average rate of 10 times per second on mobile, and even up to 30 per second on desktop. Output results are returned as ready-to-use events, with data already filtered for your convenience.
 
 ## Use cases 
 
