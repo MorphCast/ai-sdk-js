@@ -12,7 +12,7 @@ You can easily add an emotion and demographic analysis layer to your website,
 landing page or App, creating exciting, adaptive digital experiences. MorphCast is being used across digital campaigns, 
 corporate learning, eLearning, e-commerce, digital out-of-home and many other uses.
 
-You can store all data produced in local memory, in local storage or properly send to your server.
+You can store all data produced in local memory, in local storage or properly send it to your server.
 
 ## Quick Start
 
