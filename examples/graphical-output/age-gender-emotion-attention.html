@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MorphCast SDK - Demo with graphical elements</title>
+    <style>
+        #start_over {
+            position: absolute;
+            background-color: #7F8C8D;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1000;
+            cursor: pointer;
+        }
+
+        #start_over span {
+            position: absolute;
+            font-size: 20px;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            color: white;
+            display: block;
+            height: 20px;
+            margin: auto;
+            text-align: center;
+        }
+
+        #myProgress {
+            width: 50%;
+            background-color: gray;
+        }
+
+        #myBar {
+            width: 1%;
+            height: 30px;
+            background-color: green;
+        }
+    </style>
+    <!-- configuration for the Alert plugin -->
+    <meta name="mphtools-feature" content="compatibilityUI, cameraPrivacyPopup, compatibilityAutoCheck">
+</head>
+<body>
+<!-- include automatic alerts about browser and App compatibility -->
+<script src="https://sdk.morphcast.com/mphtools/v1.0/mphtools.js"></script>
+<!-- include MorphCast SDK -->
+<script src="https://ai-sdk.morphcast.com/v1.14/ai-sdk.js"></script>
+<!-- include radar chart -->
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+<!-- elements of the page -->
+<div><b>Results</b></div>
+<div id="age">Likely Age: -</div>
+<div id="gender">Likely Gender: -</div>
+<div id="emotion">Dominant Emotion: -</div>
+<span>Histogram of Emotions:</span>
+<div id="chart"></div>
+<div id="start_over">
+    <span>CLICK TO START</span>
+</div>
+<span>Attention level:</span>
+<div id="myProgress">
+    <div id="myBar"></div>
+</div>
+
+<script>
+  // Complete code documentation of MorphCast AI SDK, here:
+  // https://ai-sdk.morphcast.com/latest/index.html
+
+  const initSDK = new Promise((res) => {
+    res(CY.loader()
+      .addModule(CY.modules().FACE_AGE.name)
+      .addModule(CY.modules().FACE_GENDER.name)
+      .addModule(CY.modules().FACE_EMOTION.name)
+      .addModule(CY.modules().FACE_ATTENTION.name)
+      .load());
+  });
+
+  /*
+  Event listeners for MorphCast SDK output
+   */
+
+  window.addEventListener(CY.modules().FACE_AGE.eventName, (evt) => {
+    age_div.innerHTML = 'Likely Age: ' + evt.detail.output.numericAge + ' years';
+  });
+
+  window.addEventListener(CY.modules().FACE_GENDER.eventName, (evt) => {
+    gen_div.innerHTML = 'Likely Gender: ' + evt.detail.output.mostConfident;
+  });
+
+  window.addEventListener(CY.modules().FACE_EMOTION.eventName, (evt) => {
+    emo_div.innerHTML = 'Dominant Emotion: ' + evt.detail.output.dominantEmotion;
+
+    // data for the histogram
+    const emotions = evt.detail.output.emotion;
+    const labels = [];
+    const data = [];
+
+    Object.keys(emotions).forEach(k => {
+      labels.push(k);
+      data.push(parseInt((emotions[k] * 100).toFixed(0)));
+    });
+
+    chart.updateOptions({
+      labels: labels,
+      series:[{
+        name: 'Emotion',
+        data: data
+      }]
+    });
+  });
+
+  window.addEventListener(CY.modules().FACE_ATTENTION.eventName, (evt) => {
+    const attention = evt.detail.output.attention;
+
+    const elem = document.getElementById("myBar");
+    elem.style.width = attention * 100 + "%";
+  });
+
+  /*
+  Elements of the page
+   */
+
+  const startButton = document.querySelector("#start_over");
+
+  startButton.onclick = () => {
+    startButton.style.display = "none";
+    initSDK.then(({start}) => start());
+  };
+
+  const age_div = document.querySelector("#age");
+  const gen_div = document.querySelector("#gender");
+  const emo_div = document.querySelector("#emotion");
+
+  const options = {
+    chart: {
+      height: 350,
+      width: 500,
+      type: 'bar'
+    },
+    yaxis: {
+      min:0,
+      max:100
+    },
+    series:[],
+    title: {
+      text: ''
+    },
+    labels:[]
+  };
+  const chart = new ApexCharts(document.querySelector("#chart"), options);
+  chart.render();
+
+</script>
+</body>
+</html>
