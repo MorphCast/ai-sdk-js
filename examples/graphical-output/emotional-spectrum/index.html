@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- general -->
+    <title>Spectrum Demo!</title>
+    <meta property="description" content="Watch the Spectrum demo with your friend!">
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport'/>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="./css/normalize.css">
+    <link rel="stylesheet" type="text/css" href="./css/index.css">
+</head>
+<body>
+<div id="header">
+    <img class="logo" src="./assets/header.png">
+</div>
+<div id="wrapper">
+    <div id="video_overlay">
+        <video id="video" autoplay muted playsinline></video>
+        <div id="velina"></div>
+        <div class="face_tracker_out">
+            <div class="pin_wrapper">
+                <div class="pin pulse"></div>
+            </div>
+        </div>
+        <div id="range_select">
+            <img id="zoom_minus" src="./assets/zoom_minus.svg" ontouchstart=""/>
+            <input id="zoom" type="range" min="1" max="1.5" value="1" step="0.1"/>
+            <img id="zoom_plus" src="./assets/zoom_plus.svg" ontouchstart=""/>
+        </div>
+        <img id="cameraSwitch" src="./assets/icona_switch-camera.svg" ontouchstart=""/>
+        <img id="placeholder" src="./assets/preview_spectrum.jpg">
+        <div class="disclaimer">
+            <img class="logo" src="./assets/morphcast_logo_orizz.svg"/>
+            <p class="title">Please allow your device camera at the prompt :)</p>
+            <p class="txt">By allowing the use of your device camera, you consent to the use of your video stream for
+                the purpose of estimating your emotional state.
+                No image or video of your face will be stored on your device, sent to our server or saved in anyway by
+                MorphCast. For more information about how we carry out our analysis click <a
+                        href="https://www.morphcast.com/sdkgdpr/" target="_blank">here</a></p>
+            <div class="btn">Start</div>
+        </div>
+    </div>
+</div>
+<div class="fps"></div>
+<div class="animation"></div>
+<script src="https://ai-sdk.morphcast.com/v1.9/ai-sdk.js"></script>
+<script src="./index.js"></script>
+</body>
+</html>
