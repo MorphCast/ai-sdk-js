@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root {
+    height: 100%;
+    width: 100%;
+    background-color: #ff6200;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.bkg {
+    background-color: #ff6200;
+}
+
+.white {
+    color: white !important;
+}
+
+.emotion {
+    position: absolute;
+    opacity: 0;
+    transform: translate(-50%, 50%);
+    color: white;
+    font-size: 18px;
+    transition: all 2s ease-in-out;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.word_wrap{
+    position: absolute;
+    top:5%;
+    bottom:5%;
+    left:5%;
+    right:5%;
+    margin:auto;
+    max-width: 900px;
+    max-height: 900px;
+    background-size: 100% 100%;
+}
