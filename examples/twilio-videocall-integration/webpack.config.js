@@ -34,7 +34,7 @@ module.exports = (env, options = {}) => {
       new HtmlWebpackPlugin({
         filename: "index.html",
         template: "app/index.html",
-        title: "MorphCast VideoCall",
+        title: "VideoCall",
         chunks: ["main"],
       }),
       new CleanWebpackPlugin({

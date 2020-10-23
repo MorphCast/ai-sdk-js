@@ -1,6 +1,6 @@
 # Video-call use case
 
-This example shows how to integrate MorphCast SDK with Twilio service for creating a video-call platform with Emotional Mood recognition
+This example shows how to integrate the SDK with Twilio service for creating a video-call platform with Emotional Mood recognition
 
 ## Usage
 

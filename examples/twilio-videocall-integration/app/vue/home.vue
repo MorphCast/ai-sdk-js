@@ -26,7 +26,6 @@
     </form>
     <div class="data md-headline  md-medium-hide">{{data}}</div>
     <div class="logo">
-      <img src="./morphcast_m_logo_white.png" alt="logo">
       <p class="md-display-1 white">Video-call 1 to 1</p>
     </div>
 
