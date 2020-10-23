@@ -252,7 +252,9 @@
   /* global CY */
   var source = CY.getUserMediaCameraFactory().createCamera({video: document.getElementById('video')});
 
-  var loader = CY.loader().addModule(CY.modules().FACE_AROUSAL_VALENCE.name, {smoothness: 0.6}).licenseKey(***REMOVED***).source(source);
+  var loader = CY.loader().addModule(CY.modules().FACE_AROUSAL_VALENCE.name, {smoothness: 0.6})
+  //.licenseKey('<INSERT KEY HERE>')
+  .source(source);
 
   loader.load().then(function (_ref) {
     var start = _ref.start;
