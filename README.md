@@ -78,12 +78,10 @@ You can find the [complete documentation, here](https://ai-sdk.morphcast.com/lat
 -   Wasm Support
 -   Javascript Enabled Browser
 -   Updated Browser and OS:
-    -   Edge 16+
-    -   Chrome 67+
-    -   Safari 11.3+
-    -   FireFox 63+
-    -   iOS 11.3+
-    -   Android 5+
+    -   Chrome 67+ for Android 5+, or Windows 7+, macOS 10.10+, Linux Ubuntu 14.04+, Debian 8+, openSUSE 13.3+, or Fedora Linux 24+
+    -   Safari 11.3+ for iOS 11.3+, or macOS 10.12+
+    -   Firefox 63+ for Windows 7+, macOS 10.9+, Linux (GTK+ 3.4, GLib 2.22, Pango 1.22, X.Org 1.0, libstdc++ 4.6.1)
+    -   Edge 16+ for Windows 10+
 
 **KNOWN DEVICE ISSUES**:
 
