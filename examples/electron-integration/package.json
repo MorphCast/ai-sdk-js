@@ -1,0 +1,24 @@
+{
+  "name": "electron-integration",
+  "version": "1.0.0",
+  "description": "SDK integrated within Electron application",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": "https://github.com/electron/electron-quick-start",
+  "keywords": [
+    "Electron",
+    "quick",
+    "start",
+    "tutorial",
+    "demo"
+  ],
+  "author": "GitHub",
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "electron": "^10.1.5",
+    "http-server": "^0.12.3",
+    "node-static": "^0.7.11"
+  }
+}

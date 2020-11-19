@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI SDK test</title>
+    <meta name="mphtools-feature" content="compatibilityUI, cameraPrivacyPopup, compatibilityAutoCheck">
+    <style type="text/css">
+        #start_over {
+            position: absolute;
+            background-color: #7F8C8D;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1000;
+            cursor: pointer;
+        }
+
+        #start_over span {
+            position: absolute;
+            font-size: 20px;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            color: white;
+            display: block;
+            height: 20px;
+            margin: auto;
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+<div><b>Results</b></div>
+<div id="age">Age: -</div>
+<div id="gender">Gender: -</div>
+<div id="emotion">Emotion: -</div>
+<div id="start_over">
+    <span>CLICK HERE TO OPEN THE CAMERA AND START THE FACE ANALYSIS</span>
+</div>
+<script src="https://sdk.morphcast.com/mphtools/v1.0/mphtools.js"></script>
+<script src="https://ai-sdk.morphcast.com/v1.14/ai-sdk.js"></script>
+<script>
+  // Complete code documentation of MorphCast AI SDK, here:
+  // https://ai-sdk.morphcast.com/latest/index.html
+
+  const initSDK = new Promise((res) => {
+    res(CY.loader()
+      .addModule(CY.modules().FACE_AGE.name)
+      .addModule(CY.modules().FACE_GENDER.name)
+      .addModule(CY.modules().FACE_EMOTION.name)
+      .load());
+  });
+
+  const startButton = document.querySelector("#start_over");
+
+  startButton.onclick = () => {
+    startButton.style.display = "none";
+    initSDK.then(({
+                    start
+                  }) => start());
+  };
+
+  const age_div = document.querySelector("#age");
+  const gen_div = document.querySelector("#gender");
+  const emo_div = document.querySelector("#emotion");
+
+  window.addEventListener(CY.modules().FACE_AGE.eventName, (evt) => {
+    age_div.innerHTML = 'Age: ' + evt.detail.output.numericAge;
+  });
+
+  window.addEventListener(CY.modules().FACE_GENDER.eventName, (evt) => {
+    gen_div.innerHTML = 'Gender: ' + evt.detail.output.mostConfident;
+  });
+
+  window.addEventListener(CY.modules().FACE_EMOTION.eventName, (evt) => {
+    emo_div.innerHTML = 'Emotion: ' + evt.detail.output.dominantEmotion;
+  });
+
+</script>
+</body>
+</html>
