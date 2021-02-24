@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="mphtools-feature" content="compatibilityUI, cameraPrivacyPopup, compatibilityAutoCheck">
+    <title>MorphCast SDK - Emotional Spectrum</title>
+    <style type="text/css">
+        .grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 800px;
+            height: 686px;
+        }
+
+        .pin_wrap {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 800px;
+            height: 686px;
+        }
+
+        .pin {
+            width: 10.3%;
+            height: 12%;
+            border-radius: 50%;
+            color: rgb(255, 255, 255);
+            background-color: rgb(255, 255, 255);
+            box-shadow: 0 0 10px 10px;
+            opacity: 0.7;
+            position: absolute;
+            bottom: 44%;
+            left: 44.5%;
+        }
+    </style>
+</head>
+<body>
+    <img id="grid" class="grid" src="./spectrum.png"  alt=""/>
+    <div id="pin_wrap" class="pin_wrap">
+        <div id="pin" class="pin"></div>
+    </div>
+    <script src="https://sdk.morphcast.com/mphtools/v1.0/mphtools.js"></script>
+    <script src="https://ai-sdk.morphcast.com/v1.14/ai-sdk.js"></script>
+    <script type="application/javascript">
+      const IMG_OUTER_WIDTH = 800;
+      const IMG_INNER_WIDTH = 598;
+      const IMG_X_OFFSET = 101;
+
+      const IMG_OUTER_HEIGHT = 686;
+      const IMG_INNER_HEIGHT = 598;
+      const IMG_Y_OFFSET = 45;
+
+      const PIN_RADIUS = 6;
+
+      const img_ratio = IMG_OUTER_WIDTH/IMG_OUTER_HEIGHT;
+      const pin_radius_x = PIN_RADIUS/img_ratio;
+
+      function get2DPoint({valence, arousal}) {
+
+        const normalized = (z) => (z + 1)/2;
+
+        return {
+          x: 100*(IMG_X_OFFSET + IMG_INNER_WIDTH * normalized(valence))/IMG_OUTER_WIDTH,
+          y: 100*(IMG_Y_OFFSET + IMG_INNER_HEIGHT * normalized(arousal))/IMG_OUTER_HEIGHT
+        };
+      }
+
+      function setPinPosition({x, y}) {
+        const pin = document.getElementById("pin");
+        pin.style.left = `${x - pin_radius_x}%`; // check img ratio to avoid ellipse
+        pin.style.bottom = `${y - PIN_RADIUS}%`;
+      }
+
+      window.addEventListener(CY.modules().FACE_AROUSAL_VALENCE.eventName, (evt) => {
+        const {valence, arousal} = evt.detail.output.calibrated;
+        const {x,y} = get2DPoint({valence, arousal});
+        setPinPosition({x, y});
+      });
+
+      CY.loader()
+        .addModule(CY.modules().FACE_AROUSAL_VALENCE.name, {smoothness: 0.8})
+        .load()
+        .then(({ start, stop }) => start());
+    </script>
+</body>
+</html>
