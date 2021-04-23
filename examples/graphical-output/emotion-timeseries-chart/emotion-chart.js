@@ -5,7 +5,7 @@ const EMOTIONS = [
   'Happiness',
   'Sadness',
   'Surprise',
-  'Rested'
+  'Neutral'
 ];
 EMOTIONS.ANGER = EMOTIONS[0];
 EMOTIONS.DISGUST = EMOTIONS[1];
@@ -13,7 +13,7 @@ EMOTIONS.FEAR = EMOTIONS[2];
 EMOTIONS.HAPPINESS = EMOTIONS[3];
 EMOTIONS.SADNESS = EMOTIONS[4];
 EMOTIONS.SURPRISE = EMOTIONS[5];
-EMOTIONS.RESTED = EMOTIONS[6];
+EMOTIONS.NEUTRAL = EMOTIONS[6];
 
 const colorMap = {
   [EMOTIONS.ANGER]: '#cc002e',
@@ -22,7 +22,7 @@ const colorMap = {
   [EMOTIONS.HAPPINESS]: '#e1ef00',
   [EMOTIONS.SADNESS]: '#83c0e4',
   [EMOTIONS.SURPRISE]: '#FFC0CB',
-  [EMOTIONS.RESTED]: '#CCC',
+  [EMOTIONS.NEUTRAL]: '#FFFFFF',
 };
 
 const MAX = 30;
@@ -31,8 +31,7 @@ const STEP = 2;
 class EmoChart {
   constructor(el) {
     this._element = el;
-
-    const datasets = EMOTIONS.slice(0, 6).map((emotion) => {
+    const datasets = EMOTIONS.slice(0, 7).map((emotion) => {
       return {
         label: emotion,
         fill: false,
@@ -95,6 +94,7 @@ class EmoChart {
         }
       }
     };
+    Chart.defaults.global.defaultFontColor = "#fff";
     this._chart = new Chart(ctx, config);
     this._datasets = datasets;
     this._config = config;
@@ -114,7 +114,7 @@ class EmoChart {
   }
 
   update(time, _emotions) {
-    const emotions = [_emotions.Angry, _emotions.Disgust, _emotions.Fear, _emotions.Happy, _emotions.Sad, _emotions.Surprise];
+    const emotions = [_emotions.Angry, _emotions.Disgust, _emotions.Fear, _emotions.Happy, _emotions.Sad, _emotions.Surprise, _emotions.Neutral];
 
     emotions.forEach((value, index) => {
       this._datasets[index].data.push({y: value, x: time});
