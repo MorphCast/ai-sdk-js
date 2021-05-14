@@ -49,6 +49,7 @@
   };
 
   CY.loader()
+    //.licenseKey("insert-here-your-license-key")
     .addModule(CY.modules().FACE_DETECTOR.name, {resetTrackerAfter: 1}) // if you plan to use the sdk with single images instead of a camera stream add this line.
     .addModule(CY.modules().FACE_BASE.name, {backendOrder: "webassembly"})
     .addModule(CY.modules().FACE_AGE.name, age_config)

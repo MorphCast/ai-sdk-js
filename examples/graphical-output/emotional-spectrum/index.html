@@ -83,6 +83,7 @@
       });
 
       CY.loader()
+        //.licenseKey("insert-here-your-license-key")
         .addModule(CY.modules().FACE_AROUSAL_VALENCE.name, {smoothness: 0.8})
         .load()
         .then(({ start, stop }) => start());

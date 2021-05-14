@@ -197,9 +197,9 @@
                   const source = new Camera(this.$refs.videowrap.querySelector("video"));
                   loadSDK().then(CY => {
                     return CY.loader()
+                      //.licenseKey("insert-here-your-license-key")
                       .source(source)
                       .addModule(CY.modules().FACE_AROUSAL_VALENCE.name)
-                      // .licenseKey('<KEY>')
                       .load()
                       .then((cmd) => {
                         this.cmd = cmd;

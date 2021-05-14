@@ -72,6 +72,7 @@
 
   const initSDK = new Promise((res) => {
     res(CY.loader()
+      //.licenseKey("insert-here-your-license-key")
       .addModule(CY.modules().FACE_AGE.name)
       .addModule(CY.modules().FACE_GENDER.name)
       .addModule(CY.modules().FACE_EMOTION.name)

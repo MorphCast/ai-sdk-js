@@ -24,6 +24,7 @@ Copy and paste the following code snippet inside the _body_ of an HTML page, or 
 <script src="https://ai-sdk.morphcast.com/v1.14/ai-sdk.js"></script>
 <script>
 CY.loader()
+  .licenseKey("insert-here-your-license-key")
   .addModule(CY.modules().FACE_EMOTION.name)
   .load()
   .then(({ start, stop }) => start());
@@ -65,8 +66,10 @@ You can combine them as you like, e.g. to load FACE_DETECTOR and FACE_AGE:
 
 ```javascript
 loader = CY.loader()
+
       .addModule(CY.modules().FACE_DETECTOR.name, {})
       .addModule(CY.modules().FACE_AGE.name, {})
+
 ```
 
 You can find the [complete documentation, here](https://ai-sdk.morphcast.com/latest/index.html).
