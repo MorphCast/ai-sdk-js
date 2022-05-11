@@ -1,6 +1,6 @@
 <html>
 <head>
-  <script src="https://ai-sdk.morphcast.com/v1.14/ai-sdk.js"></script>
+  <script src="https://ai-sdk.morphcast.com/v1.16/ai-sdk.js"></script>
 </head>
 <body cz-shortcut-listen="true">
 
@@ -49,7 +49,8 @@
   };
 
   CY.loader()
-    //.licenseKey("insert-here-your-license-key")
+    // Generate your key now at https://www.morphcast.com/sdk-licence-request/
+    .licenseKey("insert-here-your-license-key")
     .addModule(CY.modules().FACE_BASE.name, {backendOrder: "webassembly"})
     .addModule(CY.modules().FACE_AGE.name, age_config)
     .addModule(CY.modules().FACE_GENDER.name, gender_config)

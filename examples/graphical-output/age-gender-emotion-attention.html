@@ -47,7 +47,7 @@
 <!-- include automatic alerts about browser and App compatibility -->
 <script src="https://sdk.morphcast.com/mphtools/v1.0/mphtools.js"></script>
 <!-- include MorphCast SDK -->
-<script src="https://ai-sdk.morphcast.com/v1.14/ai-sdk.js"></script>
+<script src="https://ai-sdk.morphcast.com/v1.16/ai-sdk.js"></script>
 <!-- include radar chart -->
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
@@ -72,7 +72,8 @@
 
   const initSDK = new Promise((res) => {
     res(CY.loader()
-      //.licenseKey("insert-here-your-license-key")
+      // Generate your key now at https://www.morphcast.com/sdk-licence-request/
+      .licenseKey("insert-here-your-license-key")
       .addModule(CY.modules().FACE_AGE.name)
       .addModule(CY.modules().FACE_GENDER.name)
       .addModule(CY.modules().FACE_EMOTION.name)

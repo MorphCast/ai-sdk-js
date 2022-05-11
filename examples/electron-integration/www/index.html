@@ -41,14 +41,15 @@
     <span>CLICK HERE TO OPEN THE CAMERA AND START THE FACE ANALYSIS</span>
 </div>
 <script src="https://sdk.morphcast.com/mphtools/v1.0/mphtools.js"></script>
-<script src="https://ai-sdk.morphcast.com/v1.14/ai-sdk.js"></script>
+<script src="https://ai-sdk.morphcast.com/v1.16/ai-sdk.js"></script>
 <script>
   // Complete code documentation of MorphCast AI SDK, here:
   // https://ai-sdk.morphcast.com/latest/index.html
 
   const initSDK = new Promise((res) => {
     res(CY.loader()
-      //.licenseKey("insert-here-your-license-key")
+      // Generate your key now at https://www.morphcast.com/sdk-licence-request/
+      .licenseKey("insert-here-your-license-key")
       .addModule(CY.modules().FACE_AGE.name)
       .addModule(CY.modules().FACE_GENDER.name)
       .addModule(CY.modules().FACE_EMOTION.name)

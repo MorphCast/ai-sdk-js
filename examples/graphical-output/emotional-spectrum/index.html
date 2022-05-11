@@ -45,7 +45,7 @@
         <div id="pin" class="pin"></div>
     </div>
     <script src="https://sdk.morphcast.com/mphtools/v1.0/mphtools.js"></script>
-    <script src="https://ai-sdk.morphcast.com/v1.14/ai-sdk.js"></script>
+    <script src="https://ai-sdk.morphcast.com/v1.16/ai-sdk.js"></script>
     <script type="application/javascript">
       const IMG_OUTER_WIDTH = 800;
       const IMG_INNER_WIDTH = 598;
@@ -77,13 +77,14 @@
       }
 
       window.addEventListener(CY.modules().FACE_AROUSAL_VALENCE.eventName, (evt) => {
-        const {valence, arousal} = evt.detail.output.calibrated;
+        const {valence, arousal} = evt.detail.output;
         const {x,y} = get2DPoint({valence, arousal});
         setPinPosition({x, y});
       });
 
       CY.loader()
-        //.licenseKey("insert-here-your-license-key")
+        // Generate your key now at https://www.morphcast.com/sdk-licence-request/
+        .licenseKey("insert-here-your-license-key")
         .addModule(CY.modules().FACE_AROUSAL_VALENCE.name, {smoothness: 0.8})
         .load()
         .then(({ start, stop }) => start());

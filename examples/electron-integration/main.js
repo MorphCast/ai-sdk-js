@@ -3,8 +3,8 @@ const {app, BrowserWindow} = require('electron')
 const path = require('path')
 
 // Create a local web server, for serving folder ./www
-const static = require('node-static');
-const file = new static.Server(`${__dirname}/www`, { cache: 0 })
+const statik = require('@brettz9/node-static');
+const file = new statik.Server(`${__dirname}/www`, { cache: 0 })
 
 require('http').createServer(function (request, response) {
     request.addListener('end', function () {

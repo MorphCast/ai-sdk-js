@@ -21,7 +21,7 @@ Copy and paste the following code snippet inside the _body_ of an HTML page, or 
 ```html
 <body>
 ...
-<script src="https://ai-sdk.morphcast.com/v1.14/ai-sdk.js"></script>
+<script src="https://ai-sdk.morphcast.com/v1.16/ai-sdk.js"></script>
 <script>
 CY.loader()
   .licenseKey("insert-here-your-license-key")
@@ -37,8 +37,11 @@ window.addEventListener(CY.modules().FACE_EMOTION.eventName, (evt) => {
 </body>
 ```
 
-A trial license is automatically generated at the first usage.
-Since camera access requires https, you shall serve the web page using http**s**
+Generate now your license key [here](https://www.morphcast.com/sdk-licence-request/).
+
+You shall serve the web page file using a web server, remote or local (e.g. http://localhost).
+   
+Since camera access requires https, when using a private network ip (e.g. https://192.168.x.x) or a public domain, you shall enable SSL in your web server configuration.
 
 The SDK will automatically open and manage a camera stream internally, as well as the browser camera request.
 
