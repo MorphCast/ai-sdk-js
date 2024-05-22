@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MorphCast SDK - Photo as an input example</title>
+</head>
+<body>
+See source code of this HTML page. Results are in the console log.
+<script src="https://ai-sdk.morphcast.com/v1.16/ai-sdk.js"></script>
+<script>
+  let url = "https://upload.wikimedia.org/wikipedia/commons/3/36/Tim_Roth_by_Gage_Skidmore_2.jpg";
+
+  let crtImgData;
+  let resolver;
+
+  const customSource = {
+    analyzeFrame(imageData) {
+      if (resolver) {
+        resolver(imageData);
+        resolver = null;
+      } else {
+        crtImgData = imageData;
+      }
+    },
+    getFrame(...args) {
+      if (crtImgData) {
+        const p = Promise.resolve(crtImgData);
+        crtImgData = null;
+        return p;
+      } else {
+        return new Promise(res => resolver = res);
+      }
+    },
+    start() { },
+    stop() { },
+    get stopped() { }
+  };
+
+  CY.loader()
+    //.licenseKey("insert-here-your-license-key")
+    .addModule(CY.modules().FACE_DETECTOR.name, {smoothness: 0}) // disables filtering over time to enable one-shot analysis
+    .addModule(CY.modules().FACE_EMOTION.name, {smoothness: 0})
+    .source(customSource)
+    .load().then(({start, stop}) => {
+    start();
+  }).catch((err) => {
+    console.error(err);
+  });
+
+  window.addEventListener(CY.modules().FACE_EMOTION.eventName, (evt) => {
+    // Remember to set smoothness to zero, in order to get the raw output for one-shot photo analysis.
+    console.log(CY.modules().FACE_EMOTION.eventName, evt.detail.output.emotion);
+
+    let nextUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Jeffrey_Jones.jpg/300px-Jeffrey_Jones.jpg";
+    getImageData(nextUrl).then(imgData2 => customSource.analyzeFrame(imgData2));
+  });
+
+  getImageData(url).then(imgData => customSource.analyzeFrame(imgData));
+
+  function getImageData(imgUrl) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = "Anonymous";
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        context.drawImage(img, 0, 0);
+        resolve(context.getImageData(0, 0, img.width, img.height));
+      };
+      img.onerror = (err) => reject(err);
+      img.src = imgUrl;
+    });
+  }
+
+</script>
+</body>
+</html>

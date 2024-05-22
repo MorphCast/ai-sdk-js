@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MorphCast SDK - Custom source with cropped canvas example</title>
+</head>
+<body>
+See source code of this HTML page.
+<canvas id="canvas"></canvas>
+<script src="https://ai-sdk.morphcast.com/v1.16/ai-sdk.js"></script>
+<script>
+  // Define here your crop region !
+  Crop = {
+    x:0,
+    y:0,
+    w:100,
+    h:100
+  };
+  // Define here your crop region !
+
+  const cropCanv = document.createElement('canvas');
+  const cropCanvCtx = cropCanv.getContext('2d');
+  const tmpCanvas = document.createElement('canvas');
+  const tmpCtx = tmpCanvas.getContext('2d');
+
+  function crop(ctx, x, y, w, h) {
+    const imageData = ctx.getImageData(x, y, w, h);
+    cropCanv.width = w - x;
+    cropCanv.height = h - y;
+    cropCanvCtx.putImageData(imageData, 0, 0);
+    return cropCanvCtx.getImageData(0,0,cropCanv.width,cropCanv.height);
+  }
+
+  function toCanvasCtx(imageData) {
+    tmpCanvas.width = imageData.width;
+    tmpCanvas.height = imageData.height;
+    tmpCtx.putImageData(imageData, 0, 0);
+    return tmpCtx;
+  }
+
+  const camera = CY.getUserMediaCameraFactory().createCamera();
+  const customSource = {
+    getFrame(...args) {
+      const frameP = camera.getFrame(...args);
+      return frameP.then((imageData) => crop(toCanvasCtx(imageData), Crop.x, Crop.y, Crop.w, Crop.h));
+    },
+    start() {
+      return camera.start();
+    },
+    stop() {
+      return camera.stop();
+    },
+    get stopped() {
+      return camera.stopped;
+    }
+  };
+
+  CY.loader()
+    //.licenseKey("insert-here-your-license-key")
+    .source(customSource)
+    .addModule(CY.modules().FACE_DETECTOR.name)
+    .load().then(({ start }) => {
+    start();
+  });
+</script>
+</body>
+</html>

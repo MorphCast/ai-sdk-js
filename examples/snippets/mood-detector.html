@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mood detection with MorphCast SDK</title>
+</head>
+<body>
+<div class="row">
+    <canvas id="canvas" class="col-md-8"></canvas>
+    <br/>
+    <button id="start" onclick="onStart()" disabled>Start</button>
+    <button id="stop" onclick="onStop()">Stop</button>
+    <div class="col-md-4">
+        <div style="height:25em;">
+            <strong>Mood detection with MorphCast SDK</strong>
+            <div id="debug" style="word-wrap:break-word;"></div>
+            <h1><div id="av_results" style="word-wrap:break-word;"></div></h1>
+        </div>
+    </div>
+    <div>
+        <div>
+            <strong>DETECTOR LOG MSGS</strong>
+        </div>
+        <div id="logs"></div>
+        <h3>MorphCast JS SDK detects different mood cards.</h3>
+        <p>
+            <strong>Instructions</strong>
+            <br/>
+            Press the start button to start the detector.
+            <br/> When a card is detected, the name of the card is written above.
+            <br/> Press the stop button to end the detector.
+        </p>
+    </div>
+</div>
+<script src="https://ai-sdk.morphcast.com/v1.16/ai-sdk.js"></script>
+<script>
+  // Begin of mood detection code
+
+  /**
+   * Represents a point in 2D dimensions (Arousal and Valence)
+   */
+  class AVPoint {
+    constructor(arousal, valence) {
+      this.arousal = arousal;
+      this.valence = valence;
+    }
+
+    distanceTo(point) {
+      return Math.sqrt(Math.pow(this.arousal - point.arousal, 2) + Math.pow(this.valence - point.valence, 2));
+    }
+
+    toString() {
+      return '( A: ' + this.arousal + ', V: ' + this.valence + ')';
+    }
+  }
+
+  /**
+   * Class for processing AVPoints and estimating moods
+   */
+  class MoodEstimator {
+    constructor() {
+      this.last_result = null;
+      this.same_results = 0;
+    }
+
+    static get MIN_STABLE_SAMPLES() {
+      return 10;
+    }
+
+    static get MIN_DISTANCE() {
+      return 0.1;
+    }
+
+    static get AVAILABLE_MOODS() {
+      return {
+        frustrated: new AVPoint(0.01, -0.13),
+        excited: new AVPoint(0.13, 0.14),
+        sad: new AVPoint(-0.07, -0.13),
+        satisfied: new AVPoint(-0.08, 0.07)
+      };
+    }
+
+
+    /**
+     * Estimate the current mood, after receiving several samples of AVPoints
+     * @param sample AVPoint detected
+     * @returns {{result: (null|*), is_stable: boolean}} an object with the estimated mood, or null if the new result is not stable yet
+     */
+    processNext(sample) {
+      const {best_mood, min_distance} = MoodEstimator.findBest(sample);
+      if (this.last_result && this.last_result === best_mood) {
+        this.same_results++;
+      } else {
+        this.last_result = best_mood;
+        this.same_results = 0;
+      }
+      const is_stable_result = this.last_result && this.same_results >= MoodEstimator.MIN_STABLE_SAMPLES;
+
+      console.log("[DEBUG] min_distance: " + min_distance.toFixed(3) + " ( < " + MoodEstimator.MIN_DISTANCE
+        + "); same_results: " + this.same_results + " ( >= " + MoodEstimator.MIN_STABLE_SAMPLES + ")");
+
+      return {
+          result: this.last_result,
+          is_stable: !!is_stable_result
+      }
+    }
+
+    static findBest(sample, threshold = MoodEstimator.MIN_DISTANCE) {
+      let best_mood = null, min_distance = +Infinity;
+
+      const moods = MoodEstimator.AVAILABLE_MOODS;
+      for (let m in moods) {
+        if (moods.hasOwnProperty(m)) {
+          const distance = moods[m].distanceTo(sample);
+          if (distance < min_distance) {
+            min_distance = distance;
+            if (distance < threshold) {
+              best_mood = m;
+            }
+          }
+        }
+      }
+
+      return {best_mood, min_distance};
+    }
+
+  }
+
+  /**
+   * Helps to freeze a stable result on the screen for few seconds
+   */
+  class DisplayFilter {
+    constructor({freeze_result_ms}) {
+      this.freeze_result_ms = freeze_result_ms;
+      this.last_timestamp = 0;
+    }
+
+    canDisplay() {
+      return Date.now() - this.last_timestamp > this.freeze_result_ms;
+    }
+
+    updateTimestamp() {
+      this.last_timestamp = Date.now();
+    }
+  }
+
+  let mood_estimator = new MoodEstimator();
+  let display_filter = new DisplayFilter({freeze_result_ms: 4000});
+
+  window.addEventListener(CY.modules().FACE_AROUSAL_VALENCE.eventName, (evt) => {
+    const {arousal, valence} = evt.detail.output.arousalvalence;
+    const sample = new AVPoint(arousal, valence);
+    const estimated_mood = mood_estimator.processNext(sample);
+
+    if (display_filter.canDisplay()) {
+      if (estimated_mood.is_stable) {
+        print("av_results", "DETECTED : " + estimated_mood.result.toUpperCase());
+        display_filter.updateTimestamp();
+      } else {
+        print("av_results", "");
+      }
+    }
+  });
+
+  // End of mood detection code
+
+  const ctx = document.getElementById('canvas').getContext('2d');
+  let dimLogged = false;
+  window.addEventListener(CY.modules().CAMERA.eventName, (evt) => {
+    const imageData = evt.detail;
+    if (!dimLogged) {
+      log(`Camera dimensions: w: ${imageData.width}, h: ${imageData.height}`);
+      dimLogged = true;
+    }
+    ctx.canvas.width = imageData.width;
+    ctx.canvas.height = imageData.height;
+    ctx.putImageData(imageData, 0, 0);
+  });
+
+  let detector = {};
+  detector.isRunning = false;
+
+
+  CY.loader()
+    //.licenseKey("insert-here-your-license-key")
+    .addModule(CY.modules().FACE_AROUSAL_VALENCE.name, {})
+    .minRestTimeMs(10) // up to 100 FPS
+    .delayMs(10) // up to 100 FPS
+    .load().then(({start, stop, terminate}) => {
+    detector.start = start;
+    detector.stop = stop;
+    document.getElementById("start").disabled = false;
+  }).catch((err) => {
+    console.error(err);
+  });
+
+
+  function log(msg) {
+    let element = document.getElementById("logs");
+    element.innerHTML += "<span>" + msg + "</span><br />";
+  }
+
+  function print(node, msg) {
+    document.getElementById(node).innerHTML = msg;
+  }
+
+  //function executes when Start button is pushed.
+  function onStart() {
+    if (detector && !detector.isRunning) {
+      detector.isRunning = true;
+      detector.start();
+    }
+    log("Clicked the start button");
+  }
+
+  //function executes when the Stop button is pushed.
+  function onStop() {
+    log("Clicked the stop button");
+    if (detector && detector.isRunning) {
+      detector.stop();
+      detector.isRunning = false;
+    }
+  }
+</script>
+</body>
+</html>

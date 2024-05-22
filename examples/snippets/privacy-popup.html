@@ -1,0 +1,58 @@
+<html><body>
+<style lang="css" scoped>
+    .disclaimer {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        padding: 40px;
+        background-color: hsla(0, 0%, 54.1%, .9);
+        color: #fff;
+        font-family: Roboto, sans-serif;
+        max-width: calc(95% - 80px);
+        z-index: 20000;
+        -webkit-transform: translateY(-50%) translateX(-50%);
+        transform: translateY(-50%) translateX(-50%);
+    }
+
+    .disclaimer .title {
+        font-size: 22px;
+    }
+
+    .disclaimer .txt {
+        font-size: 17px;
+    }
+
+    .disclaimer .btn {
+        margin-left: 50%;
+        transform: translateX(-50%);
+        border: 2px solid white;
+        border-radius: 2px;
+        color: white;
+        font-size: 24px;
+        padding: 10px;
+        width: 150px;
+        text-align: center;
+        margin-top: 50px;
+    }
+
+    .disclaimer .logo {
+        height: 40px;
+    }
+
+    .disclaimer .btn:hover {
+        cursor: pointer;
+        background-color: white;
+        color: black;
+    }
+</style>
+<div class="disclaimer" id="popup">
+    <img class="logo" src="../doc_images/morphcast_logo.svg">
+    <p class="title">Please allow your device camera at the prompt :)</p>
+    <p class="txt">By allowing the use of your device camera, you consent to the use of your video stream for
+        the purpose of estimating your emotional state.
+        No image or video of your face will be stored on your device, sent to our server or saved in anyway by
+        MorphCast. For more information about how we carry out our analysis click <a
+                href="https://www.morphcast.com/sdkgdpr/" target="_blank">here</a></p>
+    <div class="btn" onclick="document.getElementById('popup').style.display = 'none'; start();">Start</div>
+</div>
+</body></html>

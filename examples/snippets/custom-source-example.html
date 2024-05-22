@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MorphCast SDK - Custom source with rotated canvas example</title>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<script src="https://ai-sdk.morphcast.com/v1.16/ai-sdk.js"></script>
+<script>
+  function initRotation({ width, height }) {
+    const rotationCanvas = document.createElement('canvas');
+    let rotationCtx = rotationCanvas.getContext('2d');
+    rotationCanvas.width = height;
+    rotationCanvas.height = width;
+    rotationCtx.rotate(Math.PI / 2);
+    rotationCtx.translate(0, -height);
+
+    return rotationCtx;
+  }
+
+  const tmpCanvas = document.createElement('canvas');
+  const tmpCtx = tmpCanvas.getContext('2d');
+
+  function toCanvas(imageData) {
+    tmpCanvas.width = imageData.width;
+    tmpCanvas.height = imageData.height;
+    tmpCtx.putImageData(imageData, 0, 0);
+    return tmpCanvas;
+  }
+
+  let rotationCtx;
+  let firstTime = true;
+  const camera = CY.getUserMediaCameraFactory().createCamera();
+  const customSource = {
+    getFrame(...args) {
+      const frameP = camera.getFrame(...args);
+      return frameP.then((imageData) => {
+        if (firstTime) {
+          rotationCtx = initRotation(imageData);
+          firstTime = false;
+        }
+        rotationCtx.drawImage(toCanvas(imageData), 0, 0);
+        return rotationCtx.getImageData(0, 0, imageData.height, imageData.width);
+      });
+    },
+    start() {
+      return camera.start();
+    },
+    stop() {
+      return camera.stop();
+    },
+    get stopped() {
+      return camera.stopped;
+    }
+  };
+
+  CY.loader()
+    //.licenseKey("insert-here-your-license-key")
+    .addModule(CY.modules().FACE_DETECTOR.name)
+    .source(customSource)
+    .load().then(({ start }) => {
+    start();
+  }).catch((err) => {
+    console.error(err);
+  });
+
+  const ctx = document.getElementById('canvas').getContext('2d');
+  let dimLogged = false;
+  window.addEventListener(CY.modules().CAMERA.eventName, (evt) => {
+    const imageData = evt.detail;
+    if (!dimLogged) {
+      console.log(`Camera frame dimensions: w: ${imageData.width}, h: ${imageData.height}`);
+      dimLogged = true;
+    }
+    ctx.canvas.width = imageData.width;
+    ctx.canvas.height = imageData.height;
+    ctx.putImageData(imageData, 0, 0);
+  });
+</script>
+</body>
+</html>
