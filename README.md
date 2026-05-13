@@ -21,7 +21,7 @@ Copy and paste the following code snippet inside the _body_ of an HTML page, or 
 ```html
 <body>
 ...
-<script src="https://ai-sdk.morphcast.com/v1.16/ai-sdk.js"></script>
+<script src="https://ai-sdk.morphcast.com/v1.17/ai-sdk.js"></script>
 <script>
 CY.loader()
   .licenseKey("insert-here-your-license-key")
@@ -37,7 +37,7 @@ window.addEventListener(CY.modules().FACE_EMOTION.eventName, (evt) => {
 </body>
 ```
 
-Generate now your license key [here](https://www.morphcast.com/sdk-licence-request/).
+Generate now your license key [here](https://www.morphcast.com/portal/?base=embed&from=githubaisdkjs&prod=sk&action=licenserequest).
 
 You shall serve the web page file using a web server, remote or local (e.g. http://localhost).
    
@@ -49,21 +49,28 @@ Links:
 
 * [Code documentation](https://ai-sdk.morphcast.com/latest/index.html)
 * [Website](https://www.morphcast.com/sdk/)
-* [License and info](https://www.morphcast.com/contact/)
+* [Info](https://www.morphcast.com/contact/)
 
 ## Available Modules
 
 Here, a list of available modules:
 
 * FACE_DETECTOR
+* FACE_QUALITY
 * FACE_POSE
 * FACE_AGE
 * FACE_EMOTION
+* FACE_EMOTION_HD
 * FACE_GENDER
 * FACE_FEATURES
 * FACE_AROUSAL_VALENCE
 * FACE_ATTENTION
 * FACE_WISH
+* FACE_POSITIVITY
+* ALARM_NO_FACE
+* ALARM_MORE_FACES
+* ALARM_LOW_ATTENTION
+* DATA_AGGREGATOR
 
 You can combine them as you like, e.g. to load FACE_DETECTOR and FACE_AGE:
 
